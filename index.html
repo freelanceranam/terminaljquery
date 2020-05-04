@@ -1,0 +1,204 @@
+
+
+
+
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Help about questions</title>
+<!-- <link rel="stylesheet" media="screen" href="css/fullpage.css"> -->
+<!-- <link href="css/font.css" rel="stylesheet"> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<link rel="stylesheet" href="css/main.css">
+<script src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/1.1.1/typed.min.js"></script>
+<script src="https://unpkg.com/jquery.terminal/js/jquery.mousewheel-min.js"></script>
+</head>
+<body translate="no">
+<div class="container">
+  <div class="window">
+    <div class="handle">
+      <div class="buttons">
+        <button class="close"></button>
+        <button class="minimize"></button>
+        <button class="maximize"></button>
+      </div>
+      <span class="title"></span>
+    </div>
+  <div class="terminal" id="terminal">
+
+  </div>
+  <div class="states">
+    <span class='status'></span>
+  </div>
+  <!-- <input type="text" id="dummyKeyboard" class="dummy-keyboard"> -->
+  </div>
+</div>
+<script src='js/jquery.terminal.js'></script>
+<script src='js/typed.custom.js'></script>
+<!-- <script id="myscript" src='js/customebefore.js'></script> -->
+<script>
+  $(document).ready(function () {
+
+  $(function() {
+    var login   = localStorage.getItem('0_login');
+    var type    = '123456789';
+    var content = '';
+
+    if ( login == null) {
+
+      $('#terminal').terminal("text/json-rpc-service-demo.php", {
+       login: true,
+       greetings: "You are authenticated"
+     });
+
+    }else {
+
+      $(document).find('#terminal').terminal(function(command, term) {
+          term.pause();
+          $.post('text/session.php', {
+             command : command,
+             content : content,
+             type    : type,
+           }).then(function(response) {
+               var value = JSON.parse(response)
+               type = value[0];
+               content = value[2];
+               var result = value[1];
+
+                if (content == 'name') {
+                  names(result,type);
+                }else if (content == 'gender') {
+                  gender(type);
+                }else if (content == 'contact') {
+                  contact(type);
+                }else if (content == 'stories') {
+                  stories(result,type)
+                }else if (content == 'ending') {
+                  Ending(result,type)
+                }else {
+                  term.echo(value[1]).resume();
+                }
+                // term.echo(String(value[3]).resume();
+                term.echo('').resume();
+          });
+      }, {
+          greetings: 'Enter the chapter to 123456789 continue'
+      });
+    }
+  });
+
+
+
+  // // COMMANDS
+    function enter(text) {
+      text = text;
+      var length = $(document).find('.terminal-command[data-index]').length;
+      var el = $(document).find('.terminal-output').last();
+      el.append('<span class="syst">Enter: '+text+'</span>\n');
+      el.scrollTop(el.prop("scrollHeight") * 100);
+    }
+
+    function names(text,type) {
+      text = text;
+      var length = $(document).find('.terminal-command[data-index]').length;
+      var length = length;
+      var el = $(document).find('.terminal-output').last();
+      el.append('<span class="syst">Ready to read this chapter </span> <span class="answer">' + text + '</span>\n\nAgree to the <a href="#" class="answer">reading process</a>?\n\n');
+
+      enter(type);
+    }
+
+    function gender(type) {
+      var length = $(document).find('.terminal-command[data-index]').length;
+      var length = length;
+      var el = $(document).find('.terminal-output').last()
+      el.append('\nReading process takes about 5 minutes. You must confirm that you can wait.\n\n');
+      enter(type);
+    };
+
+    function contact(type) {
+      var length = $(document).find('.terminal-command[data-index]').length;
+      var length = length;
+      var el = $(document).find('.terminal-output').last()
+      el.append('\nSystem is ready...\n\n');
+      enter(type);
+    }
+
+    function stories(text,type) {
+      text = text;
+      var length = $(document).find('.terminal-command[data-index]').length;
+      var length = length;
+      var el = $(document).find('.terminal-output').last();
+      el.append('\n<span class="syst">Process started: '+type+'</span>\n\n<span class="count-'+length+'"></span>\n\n')
+      setTimeout(function(){
+        $(function(e) {
+          var bprogress = '#', progress = '',  counters = 0;
+          $('.count-'+length).typed({
+            strings: [text],
+        		// typing speed
+        		typeSpeed: 2,
+            callback: function() {
+              enter(type);
+            },
+            preStringTyped: function() {
+              var beforetxt = text.length
+              // bstrOfall = beforetxt.length,
+              // console.log('yasstart');
+              setInterval(typing = function(){
+                for(var i = 0; i < 100; i ++) progress = progress + bprogress;
+                // console.log(progress);
+                // statusObj.text('[ ' + progress + ']' + str_percent + ' %');
+                el.scrollTop(el.prop("scrollHeight") * 100);
+              }, 100);
+            },
+          });
+        });
+      }, 500);
+    }
+
+  function Ending(){
+    var el = $(document).find('.terminal-output').last();
+    el.append("<div class='kittens'>" +
+              "<p class='prompt'></p>" +
+              "<p class='prompt' style='font-size: 48px;'><center><b>HAPPY BIRTHDAY TO YOU!</b></center></p>" +
+              "<p class='prompt'></p>" +
+              "<p class='prompt'></p></div>"
+              );
+
+    setTimeout(function () {
+        var gif ;
+        // $.get('http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&amp;tag=Happy+Birthday+!').then(function(response) {
+        //     gif = result.data.image_url;
+        //     el.append('<img class="kitten-gif" src="' + gif + '"">');
+            resetForm(true);
+        //  });
+      }, 500);
+  }
+  // // END COMMANDS
+
+  function resetForm(withKittens) {
+    var el = $(document).find('.terminal-output').last();
+
+    var message = "Sorry that command is not recognized.";
+    var input = $('.404-input');
+
+    if (withKittens) {
+      $('.kittens').removeClass('kittens');
+      message = "WILL GO TO YOUTUBE after 10 sec ! => ";
+    }
+
+    $('.new-output').removeClass('new-output');
+    input.val('');
+    el.append('<p class="prompt">' + message + '</p><p class="prompt output new-output"></p>');
+    setTimeout(function(){
+      window.location.href = "https://youtube.com";
+      terminal.scrollTop(terminal.prop("scrollHeight"));
+    }, 10000);
+  }
+
+});
+
+</script>
+</body>
+</html>
