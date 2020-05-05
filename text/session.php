@@ -3,32 +3,32 @@ if (isset($_POST['command'])) {
   if ($_POST['type'] == '123456789' && $_POST['command'] == '123456789') {
       echo json_encode(
         array(
-          'yes',
+          'Yes',
           $_POST['command'],
-          'name'
+          'ending'
         )
       );
-  }elseif ($_POST['type'] == 'yes' && $_POST['command'] == 'yes') {
+  }elseif (strtolower($_POST['type']) == 'yes' && strtolower($_POST['command']) == 'yes') {
     echo json_encode(
       array(
-        'i can wait',
+        'I can wait',
         '',
         'gender'
       )
     );
-  }elseif ($_POST['type'] == 'i can wait' && $_POST['command'] == 'i can wait') {
+  }elseif (strtolower($_POST['type']) == 'i can wait' && strtolower($_POST['command']) == 'i can wait') {
     echo json_encode(
       array(
-        'read',
+        'Read',
         '',
         'contact'
 
       )
     );
-  }elseif ($_POST['type'] == 'read' && $_POST['type'] == 'read') {
+  }elseif (strtolower($_POST['type']) == 'read' && strtolower($_POST['command']) == 'read') {
     echo json_encode(
       array(
-      'start',
+      'Start',
       'Long Text 1
 
       Location	Israel
@@ -42,10 +42,10 @@ if (isset($_POST['command'])) {
       'stories'
       )
     );
-  }elseif ($_POST['type'] == 'start' && $_POST['command'] == 'start') {
+  }elseif (strtolower($_POST['type']) == 'start' && strtolower($_POST['command']) == 'start') {
     echo json_encode(
       array(
-        'get',
+        'Get',
         'Long Text 2
 
         Average depth	199 m (653 ft)[3]
@@ -57,10 +57,10 @@ if (isset($_POST['command'])) {
         'stories'
       )
     );
-  }elseif ($_POST['type'] == 'get' && $_POST['command'] == 'get') {
+  }elseif (strtolower($_POST['type']) == 'get' && strtolower($_POST['command']) == 'get') {
     echo json_encode(
       array(
-        'funny',
+        'Funny',
         'Long Text 3
 
         Primary inflows	Jordan River
@@ -71,10 +71,10 @@ if (isset($_POST['command'])) {
         'stories'
       )
     );
-  }elseif ($_POST['type'] == 'funny' && $_POST['command'] == 'funny') {
+  }elseif (strtolower($_POST['type']) == 'funny' && strtolower($_POST['command']) == 'funny') {
     echo json_encode(
     array(
-        'verify',
+        'Verify',
         'Long Text 4
 
           Palestine
@@ -84,20 +84,20 @@ if (isset($_POST['command'])) {
           'stories'
       )
     );
-  }elseif ($_POST['type'] == 'verify' && $_POST['command'] == 'verify') {
+  }elseif (strtolower($_POST['type']) == 'verify' && strtolower($_POST['command']) == 'verify') {
     echo json_encode(
       array(
-        'aaa',
+        'AAA',
         'Long Text 5
 
         Ben-Avraham, Zvi; Katsman, Regina (2015). "The formation of graben morphology in the Dead Sea Fault, and its implications". Geophysical Research Letters. American Geophysical Union. 42 (17). 2.2. Sedimentary Regime, p. 6991 (of 6989Ã¢â‚¬â€œ6996). doi:10.1002/2015GL065111. Estuarine-lagoonal series of syn-rift evaporites of the latest MioceneÃ¢â‚¬â€Pliocene ages. Sedimentary regime and mineral composition indicate that .... the Sedom formation in the DSB [Dead Sea Basin] .... , consisting mainly of halite, can be related to ingression of sea waters .... through the Yezreel Valley inland int
         ','stories'
       )
     );
-  }elseif ($_POST['type'] == 'aaa' && $_POST['command'] == 'aaa') {
+  }elseif (strtolower($_POST['type']) == 'aaa' && strtolower($_POST['command']) == 'aaa') {
     echo json_encode(
       array(
-        "bbb","Long Text 6
+        "BBB","Long Text 6
 
         Project Gutenberg's The Works of Edgar Allan Poe, by Edgar Allan Poe
 
@@ -114,10 +114,10 @@ if (isset($_POST['command'])) {
       "stories"
     )
     );
-  }elseif ($_POST['type'] == 'bbb' && $_POST['command'] == 'bbb') {
+  }elseif (strtolower($_POST['type']) == 'bbb' && strtolower($_POST['command']) == 'bbb') {
     echo json_encode(
       array(
-        "ccc","Long Text 7
+        "CCC","Long Text 7
 
         Release Date: May 19, 2008 [EBook #2147]
         	Last Updated:
@@ -136,10 +136,10 @@ if (isset($_POST['command'])) {
         "stories"
       )
     );
-  }elseif ($_POST['type'] == 'ccc' && $_POST['command'] == 'ccc') {
+  }elseif (strtolower($_POST['type']) == 'ccc' && strtolower($_POST['command']) == 'ccc') {
     echo json_encode(
       array(
-        "y",
+        "Y",
         "Long Text 8
 
         with this eBook or online at www.gutenberg.org
@@ -158,7 +158,7 @@ if (isset($_POST['command'])) {
         "stories"
       )
     );
-  }elseif ($_POST['type'] == 'y' && $_POST['command'] == 'y') {
+  }elseif (strtolower($_POST['type']) == 'y' && strtolower($_POST['command']) == 'y') {
     echo json_encode(
       array(
         'finish','','ending'

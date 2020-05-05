@@ -1,7 +1,25 @@
+$(document).ready(function () {
+
 $(function() {
   var login   = localStorage.getItem('0_login');
   var type    = '123456789';
   var content = '';
+
+  if ( login == null) {
+
+    $('#terminal').terminal("text/json-rpc-service-demo.php", {
+      greetings: "You are authenticated",
+      login: function(user, password, callback) {
+           if (user == 'demo' && password == 'demo') {
+               localStorage.setItem('0_login', user);
+               location.reload(true);
+           } else {
+               callback(null);
+           }
+       }
+   });
+
+  }else {
 
     $(document).find('#terminal').terminal(function(command, term) {
         term.pause();
@@ -22,27 +40,28 @@ $(function() {
               }else if (content == 'contact') {
                 contact(type);
               }else if (content == 'stories') {
-                stories(result,type)
+                stories(result,type,command)
               }else if (content == 'ending') {
                 Ending(result,type)
               }else {
                 term.echo(value[1]).resume();
               }
-              // term.echo(String(value[3]).resume();
               term.echo('').resume();
         });
     }, {
         greetings: 'Enter the chapter to 123456789 continue'
     });
+  }
+});
 
-})
+
 
 // // COMMANDS
   function enter(text) {
     text = text;
     var length = $(document).find('.terminal-command[data-index]').length;
     var el = $(document).find('.terminal-output').last();
-    el.append('<span class="syst">Enter: '+text+'</span>\n');
+    el.append('<span class="syst">Enter: '+text+'</span><br>');
     el.scrollTop(el.prop("scrollHeight") * 100);
   }
 
@@ -51,7 +70,7 @@ $(function() {
     var length = $(document).find('.terminal-command[data-index]').length;
     var length = length;
     var el = $(document).find('.terminal-output').last();
-    el.append('<span class="syst">Ready to read this chapter </span> <span class="answer">' + text + '</span>\n\nAgree to the <a href="#" class="answer">reading process</a>?\n\n');
+    el.append('<span class="syst">Ready to read this chapter </span> <span class="answer">' + text + '</span><br><br>Agree to the <a href="#" class="answer">reading process</a>?<br><br>');
 
     enter(type);
   }
@@ -60,7 +79,7 @@ $(function() {
     var length = $(document).find('.terminal-command[data-index]').length;
     var length = length;
     var el = $(document).find('.terminal-output').last()
-    el.append('\nReading process takes about 5 minutes. You must confirm that you can wait.\n\n');
+    el.append('<br>Reading process takes about 5 minutes. You must confirm that you can wait.<br><br>');
     enter(type);
   };
 
@@ -68,36 +87,65 @@ $(function() {
     var length = $(document).find('.terminal-command[data-index]').length;
     var length = length;
     var el = $(document).find('.terminal-output').last()
-    el.append('\nSystem is ready...\n\n');
+    el.append('<br>System is ready...<br><br>');
     enter(type);
   }
 
-  function stories(text,type) {
+  function stories(text,type,process) {
     text = text;
+
+    var bprogress = '#',
+        progress = '',
+        counters = 0;
+
+    var statusObj = $(document).find('.status');
     var length = $(document).find('.terminal-command[data-index]').length;
-    var length = length;
     var el = $(document).find('.terminal-output').last();
-    el.append('\n<span class="syst">Process started: '+type+'</span>\n\n<span class="count-'+length+'"></span>\n\n')
+
+    el.append('<span class="typed"></span>');
+    var span = $('.terminal .typed:last');
+    var length = length;
+
+    el.append('<br><span class="syst">Process started: '+process+'</span><br><br><span class="count-'+length+'"></span><br><br>')
+
+    var et = $(document).find('.count-'+length+'');
+    var te = $(document).find('#terminal');
+
     setTimeout(function(){
       $(function(e) {
         var bprogress = '#', progress = '',  counters = 0;
         $('.count-'+length).typed({
           strings: [text],
-          // typing speed
           typeSpeed: 2,
           callback: function() {
             enter(type);
           },
+          onStringTyped: function() {
+            te.scrollTop(el.prop("scrollHeight") * 100);
+            console.log('after');
+            clearTimeout(typing);
+            statusObj.text('');
+          },
           preStringTyped: function() {
-            var beforetxt = text.length
-            // bstrOfall = beforetxt.length,
-            // console.log('yasstart');
-            setInterval(typing = function(){
-              for(var i = 0; i < 100; i ++) progress = progress + bprogress;
-              // console.log(progress);
-              // statusObj.text('[ ' + progress + ']' + str_percent + ' %');
-              el.scrollTop(el.prop("scrollHeight") * 100);
-            }, 100);
+              console.log('before');
+              $('.typed-cursor').detach();
+              nEdit = 1;
+              span.next().text('');
+              var beforetxt = et.text(),
+                  bstrOfall = beforetxt.length,
+                  readytxt = text;
+              setInterval(typing = function() {
+                  var nstrOfall = readytxt.length,
+                      istrOfall = et.text().length;
+                  progress = '';
+                  te.scrollTop(et.height() * 100);
+                  if (istrOfall < nstrOfall + bstrOfall) {
+                      str_percent = parseInt((istrOfall - bstrOfall) * 1000 / nstrOfall) / 10;
+                      counters = parseInt(str_percent / 2.895);
+                      for (var i = 0; i < counters; i++) progress = progress + bprogress;
+                      statusObj.text('[ ' + progress + ']' + str_percent + ' %');
+                  }
+              }, 100);
           },
         });
       });
@@ -115,11 +163,11 @@ function Ending(){
 
   setTimeout(function () {
       var gif ;
-      // $.get('http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&amp;tag=Happy+Birthday+!').then(function(response) {
-      //     gif = result.data.image_url;
-      //     el.append('<img class="kitten-gif" src="' + gif + '"">');
+      $.get('http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&amp;tag=Happy+Birthday+!').then(function(response) {
+          gif = response.data.image_url;
+          el.append('<img class="kitten-gif" src="' + gif + '"">');
           resetForm(true);
-      //  });
+       });
     }, 500);
 }
 // // END COMMANDS
@@ -143,3 +191,5 @@ function resetForm(withKittens) {
     terminal.scrollTop(terminal.prop("scrollHeight"));
   }, 10000);
 }
+
+});
