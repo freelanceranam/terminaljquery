@@ -5,7 +5,7 @@ if (isset($_POST['command'])) {
         array(
           'Yes',
           $_POST['command'],
-          'ending'
+          'name'
         )
       );
   }elseif (strtolower($_POST['type']) == 'yes' && strtolower($_POST['command']) == 'yes') {
