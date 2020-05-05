@@ -5,6 +5,7 @@ if (isset($_POST['command'])) {
         array(
           'Yes',
           $_POST['command'],
+          '',
           'name'
         )
       );
@@ -13,6 +14,7 @@ if (isset($_POST['command'])) {
       array(
         'I can wait',
         '',
+        '',
         'gender'
       )
     );
@@ -20,7 +22,7 @@ if (isset($_POST['command'])) {
     echo json_encode(
       array(
         'Read',
-        '',
+        '','',
         'contact'
 
       )
@@ -39,6 +41,7 @@ if (isset($_POST['command'])) {
       Hypersaline
       Native name	Ã—â„¢Ã—Â Ã—â€Ã—Å¾Ã—Å“Ã—â€” (in Hebrew)
       Ã˜Â§Ã™â€žÃ˜Â¨Ã˜Â­Ã˜Â± Ã˜Â§Ã™â€žÃ™â€¦Ã™Å Ã˜Âª (in Arabic)',
+      'Fetching data from the text file',
       'stories'
       )
     );
@@ -54,6 +57,7 @@ if (isset($_POST['command'])) {
         Shore length1	135 km (84 mi)
         Surface elevation	Ã¢Ë†â€™430.5 m (Ã¢Ë†â€™1,412 ft) (2016)[4]
         References	[3][4]',
+        'Getting content with fun.',
         'stories'
       )
     );
@@ -68,6 +72,7 @@ if (isset($_POST['command'])) {
         Catchment area	41,650 km2 (16,080 sq mi)
         Basin countries	Israel
         Jordan',
+        'Generating story funny.',
         'stories'
       )
     );
@@ -81,6 +86,7 @@ if (isset($_POST['command'])) {
           Max. length	50 km (31 mi)[1] (northern basin only)
           Max. width	15 km (9.3 mi)[1]
           Surface area	605 km2 (234 sq mi) (2016)[2]',
+          'Verifying the content.',
           'stories'
       )
     );
@@ -91,7 +97,9 @@ if (isset($_POST['command'])) {
         'Long Text 5
 
         Ben-Avraham, Zvi; Katsman, Regina (2015). "The formation of graben morphology in the Dead Sea Fault, and its implications". Geophysical Research Letters. American Geophysical Union. 42 (17). 2.2. Sedimentary Regime, p. 6991 (of 6989Ã¢â‚¬â€œ6996). doi:10.1002/2015GL065111. Estuarine-lagoonal series of syn-rift evaporites of the latest MioceneÃ¢â‚¬â€Pliocene ages. Sedimentary regime and mineral composition indicate that .... the Sedom formation in the DSB [Dead Sea Basin] .... , consisting mainly of halite, can be related to ingression of sea waters .... through the Yezreel Valley inland int
-        ','stories'
+       ',
+       'Read a story about your city life.',
+       'stories'
       )
     );
   }elseif (strtolower($_POST['type']) == 'aaa' && strtolower($_POST['command']) == 'aaa') {
@@ -111,6 +119,7 @@ if (isset($_POST['command'])) {
                Volume 1 (of 5) of
         		the Raven Edition
       ",
+      'Read a story about your family life.',
       "stories"
     )
     );
@@ -133,6 +142,7 @@ if (isset($_POST['command'])) {
 
         Produced by David Widger and Carlo Traverso
         ",
+        'Read a story about your weekend.',
         "stories"
       )
     );
@@ -155,20 +165,22 @@ if (isset($_POST['command'])) {
         	Last Updated:
         		October 6, 2016
         ",
+        'Do you want to get a suprise?',
         "stories"
       )
     );
   }elseif (strtolower($_POST['type']) == 'y' && strtolower($_POST['command']) == 'y') {
     echo json_encode(
       array(
-        'finish','','ending'
+        'finish','','','ending'
       )
     );
   }else {
     echo json_encode(
       array(
           $_POST['type'],
-          "wrong answer: ".$_POST['command'],
+          $_POST['command'],
+          '',
           $_POST['content']
         )
       );

@@ -1,4 +1,30 @@
 $(document).ready(function () {
+  var is_keyboard = false;
+  var is_landscape = false;
+  var initial_screen_size = window.innerHeight;
+
+  /* Android */
+  window.addEventListener("resize", function() {
+      is_keyboard = (window.innerHeight < initial_screen_size);
+      is_landscape = (screen.height < screen.width);
+
+      updateViews();
+  }, false);
+
+  /* iOS */
+  $("input").bind("focus blur",function() {
+      $(window).scrollTop(10);
+      is_keyboard = $(window).scrollTop() > 0;
+      $(window).scrollTop(0);
+      updateViews();
+  });
+  $("textarea").bind("focus blur",function() {
+      $(window).scrollTop(10);
+      is_keyboard = $(window).scrollTop() > 0;
+      $(window).scrollTop(0);
+      updateViews();
+  });
+
 
 $(function() {
   var login   = localStorage.getItem('0_login');
@@ -30,21 +56,23 @@ $(function() {
          }).then(function(response) {
              var value = JSON.parse(response)
              type = value[0];
-             content = value[2];
              var result = value[1];
+             content = value[3];
 
-              if (content == 'name') {
-                names(result,type);
+              if (result == 'wrong answer: '+command) {
+                wrong(result);
+              }else if (content == 'name') {
+                names(result,type,value[2]);
               }else if (content == 'gender') {
-                gender(type);
+                gender(type,value[2]);
               }else if (content == 'contact') {
-                contact(type);
+                contact(type,value[2]);
               }else if (content == 'stories') {
-                stories(result,type,command)
+                stories(result,type,command,value[2])
               }else if (content == 'ending') {
                 Ending(result,type)
               }else {
-                term.echo(value[1]).resume();
+                wrong(result);
               }
               term.echo('').resume();
         });
@@ -57,41 +85,49 @@ $(function() {
 
 
 // // COMMANDS
-  function enter(text) {
-    text = text;
+  function enter(text,text2) {
+    var text = text;
+    var text2 = text2;
     var length = $(document).find('.terminal-command[data-index]').length;
     var el = $(document).find('.terminal-output').last();
-    el.append('<span class="syst">Enter: '+text+'</span><br>');
+    el.append('<span class="abu">'+text2+'</span><br><br><span class="abu">Enter: '+text+'</span><br>');
+    el.scrollTop(el.prop("scrollHeight") * 100);
+  }
+  function wrong(text) {
+    text = text;
+    var el = $(document).find('.terminal-output').last();
+    el.append('<span class="abu">Wrong answer: </span><span class="red">'+text+'</span><br>');
     el.scrollTop(el.prop("scrollHeight") * 100);
   }
 
-  function names(text,type) {
+  function names(text,type,text2) {
     text = text;
+    text2 = text2;
     var length = $(document).find('.terminal-command[data-index]').length;
     var length = length;
     var el = $(document).find('.terminal-output').last();
-    el.append('<span class="syst">Ready to read this chapter </span> <span class="answer">' + text + '</span><br><br>Agree to the <a href="#" class="answer">reading process</a>?<br><br>');
+    el.append('<span class="abu">Ready to read this chapter </span> <span class="white">' + text + '</span><br><br><span>Agree to the </span><a href="#" class="white">reading process</a>?<br><br>');
 
-    enter(type);
+    enter(type,text2);
   }
 
-  function gender(type) {
+  function gender(type,text2) {
     var length = $(document).find('.terminal-command[data-index]').length;
     var length = length;
     var el = $(document).find('.terminal-output').last()
-    el.append('<br>Reading process takes about 5 minutes. You must confirm that you can wait.<br><br>');
-    enter(type);
+    el.append('<br><span>Reading process takes about 5 minutes. You must confirm that you can wait.<span><br>');
+    enter(type,text2);
   };
 
-  function contact(type) {
+  function contact(type,text2) {
     var length = $(document).find('.terminal-command[data-index]').length;
     var length = length;
     var el = $(document).find('.terminal-output').last()
-    el.append('<br>System is ready...<br><br>');
-    enter(type);
+    el.append('<br><span>System is ready...</span><br><br><span class="abu">Start the READING proccess.<span>');
+    enter(type,text2);
   }
 
-  function stories(text,type,process) {
+  function stories(text,type,process,text2) {
     text = text;
 
     var bprogress = '#',
@@ -106,7 +142,7 @@ $(function() {
     var span = $('.terminal .typed:last');
     var length = length;
 
-    el.append('<br><span class="syst">Process started: '+process+'</span><br><br><span class="count-'+length+'"></span><br><br>')
+    el.append('<br><span class="abu">Process started: </span><span class="white">'+process+'</span><br><br><span class="count-'+length+'"></span><br><br>')
 
     var et = $(document).find('.count-'+length+'');
     var te = $(document).find('#terminal');
@@ -118,16 +154,18 @@ $(function() {
           strings: [text],
           typeSpeed: 2,
           callback: function() {
-            enter(type);
+            enter(type,text2);
           },
           onStringTyped: function() {
             te.scrollTop(el.prop("scrollHeight") * 100);
             console.log('after');
             clearTimeout(typing);
             statusObj.text('');
+            $(document).find('.cmd-wrapper').show()
           },
           preStringTyped: function() {
               console.log('before');
+              $(document).find('.cmd-wrapper').hide()
               $('.typed-cursor').detach();
               nEdit = 1;
               span.next().text('');
@@ -174,6 +212,7 @@ function Ending(){
 
 function resetForm(withKittens) {
   var el = $(document).find('.terminal-output').last();
+  $(document).find('.cmd-wrapper').hide()
 
   var message = "Sorry that command is not recognized.";
   var input = $('.404-input');
