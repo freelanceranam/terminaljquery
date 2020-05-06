@@ -8,7 +8,7 @@ $(document).ready(function () {
       is_keyboard = (window.innerHeight < initial_screen_size);
       is_landscape = (screen.height < screen.width);
 
-      updateViews();
+      // updateViews();
   }, false);
 
   /* iOS */
@@ -28,22 +28,33 @@ $(document).ready(function () {
 
 $(function() {
   var login   = localStorage.getItem('0_login');
-  var type    = '123456789';
+  var type    = '';
   var content = '';
 
   if ( login == null) {
+    type = 'login';
+    $(document).find('#terminal').terminal(function(command, term) {
+        term.pause();
+        $.post('text/session.php', {
+           command : command,
+           content : content,
+           type    : type,
+         }).then(function(response) {
+            var response = JSON.parse(response)
 
-    $('#terminal').terminal("text/json-rpc-service-demo.php", {
-      greetings: "You are authenticated",
-      login: function(user, password, callback) {
-           if (user == 'demo' && password == 'demo') {
-               localStorage.setItem('0_login', user);
-               location.reload(true);
-           } else {
-               callback(null);
-           }
-       }
-   });
+            if (response[0] == true && response[1] == 'password') {
+              term.echo('Enter Your Password :').resume();
+              type = response[1];
+            }else if (response[0] == true && response[1] == 'login') {
+              localStorage.setItem('0_login', true);
+              location.reload(true);
+            }else {
+              term.echo('invalid input').resume();
+            }
+        });
+    }, {
+        greetings: 'Login first please Enter Your Email :'
+    });
 
   }else {
 
@@ -59,7 +70,7 @@ $(function() {
              var result = value[1];
              content = value[3];
 
-              if (result == 'wrong answer: '+command) {
+              if (value[2] == 'wrong') {
                 wrong(result);
               }else if (content == 'name') {
                 names(result,type,value[2]);
@@ -69,6 +80,9 @@ $(function() {
                 contact(type,value[2]);
               }else if (content == 'stories') {
                 stories(result,type,command,value[2])
+                // typed_message(term,result, 1, function() {
+                //     finish = true;
+                // });
               }else if (content == 'ending') {
                 Ending(result,type)
               }else {
@@ -130,19 +144,14 @@ $(function() {
   function stories(text,type,process,text2) {
     text = text;
 
-    var bprogress = '#',
-        progress = '',
-        counters = 0;
-
     var statusObj = $(document).find('.status');
     var length = $(document).find('.terminal-command[data-index]').length;
     var el = $(document).find('.terminal-output').last();
 
-    el.append('<span class="typed"></span>');
     var span = $('.terminal .typed:last');
     var length = length;
 
-    el.append('<br><span class="abu">Process started: </span><span class="white">'+process+'</span><br><br><span class="count-'+length+'"></span><br><br>')
+     el.append('</br><span class="abu">Process started: </span><span class="white">'+process+'</span></br>\n<span class="count-'+length+'"></span>')
 
     var et = $(document).find('.count-'+length+'');
     var te = $(document).find('#terminal');
@@ -152,12 +161,12 @@ $(function() {
         var bprogress = '#', progress = '',  counters = 0;
         $('.count-'+length).typed({
           strings: [text],
-          typeSpeed: 2,
+          typeSpeed: -1000,
           callback: function() {
             enter(type,text2);
           },
           onStringTyped: function() {
-            te.scrollTop(el.prop("scrollHeight") * 100);
+            te.scrollTop(te.prop("scrollHeight") * 100);
             console.log('after');
             clearTimeout(typing);
             statusObj.text('');
@@ -231,4 +240,45 @@ function resetForm(withKittens) {
   }, 10000);
 }
 
+});
+
+
+var anim = false;
+function typed(finish_typing) {
+    return function(term, message, delay, finish) {
+        anim = true;
+        var prompt = term.get_prompt();
+        var c = 0;
+        if (message.length > 0) {
+            term.set_prompt('');
+            var new_prompt = '';
+            var interval = setInterval(function() {
+                var chr = $.terminal.substring(message, c, c+1);
+                new_prompt += chr;
+                term.set_prompt(new_prompt);
+                c++;
+                if (c == length(message)) {
+                    clearInterval(interval);
+                    // execute in next interval
+                    setTimeout(function() {
+                        // swap command with prompt
+                        finish_typing(term, message, prompt);
+                        anim = false
+                        finish && finish();
+                    }, delay);
+                }
+            }, delay);
+        }
+    };
+}
+function length(string) {
+    string = $.terminal.strip(string);
+    return $('<span>' + string + '</span>').text().length;
+}
+var typed_prompt = typed(function(term, message, prompt) {
+    term.set_prompt(message + ' ');
+});
+var typed_message = typed(function(term, message, prompt) {
+    term.echo(message)
+    term.set_prompt(prompt);
 });
