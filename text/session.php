@@ -1,15 +1,11 @@
 <?php
 session_start(); // call session
 
+// for example
+$_SESSION['logged_email'] = 'demo@gmail.com';
+$_SESSION['logged_password'] = 'demo123';
 
 if (isset($_POST['command'])) {
-
-  if(isset($_SESSION['logged_email'])) // what he enter is matching the email in session = jasonwind@gmail.com
-    {
-      // for example
-      $_SESSION['logged_email'] = 'demo@gmail.com';
-      $_SESSION['logged_password'] = 'demo123';
-    }
 
   if($_POST['type'] == 'login' && $_POST['command'] == $_SESSION['logged_email']) // what he enter is matching the email in session = jasonwind@gmail.com
     {

@@ -1,0 +1,61 @@
+[1mdiff --git a/js/main.js b/js/main.js[m
+[1mindex 303ea4e..3d7382b 100644[m
+[1m--- a/js/main.js[m
+[1m+++ b/js/main.js[m
+[36m@@ -59,7 +59,7 @@[m [m$(function() {[m
+              var result = value[1];[m
+              content = value[3];[m
+ [m
+[31m-              if (result == 'wrong answer: '+command) {[m
+[32m+[m[32m              if (value[2] == 'wrong') {[m
+                 wrong(result);[m
+               }else if (content == 'name') {[m
+                 names(result,type,value[2]);[m
+[36m@@ -123,26 +123,25 @@[m [m$(function() {[m
+     var length = $(document).find('.terminal-command[data-index]').length;[m
+     var length = length;[m
+     var el = $(document).find('.terminal-output').last()[m
+[31m-    el.append('<br><span>System is ready...</span><br><br><span class="abu">Start the READING proccess.<span>');[m
+[32m+[m[32m    el.append('<br><span>System is ready...</span><br><br><span class="abu">Start the READING proccess.</span>');[m
+     enter(type,text2);[m
+   }[m
+ [m
+   function stories(text,type,process,text2) {[m
+[31m-    text = text;[m
+[32m+[m[32m    var text = text;[m
+ [m
+[31m-    var bprogress = '#',[m
+[31m-        progress = '',[m
+[31m-        counters = 0;[m
+[32m+[m[32m    var bprogress = '#';[m
+[32m+[m[32m    var progress = ''[m
+[32m+[m[32m    var counters = 0;[m
+ [m
+     var statusObj = $(document).find('.status');[m
+     var length = $(document).find('.terminal-command[data-index]').length;[m
+     var el = $(document).find('.terminal-output').last();[m
+ [m
+[31m-    el.append('<span class="typed"></span>');[m
+     var span = $('.terminal .typed:last');[m
+     var length = length;[m
+ [m
+[31m-    el.append('<br><span class="abu">Process started: </span><span class="white">'+process+'</span><br><br><span class="count-'+length+'"></span><br><br>')[m
+[32m+[m[32m    el.append('</br><span class="abu">Process started: </span><span class="white">'+process+'</span></br>\n<span class="count-'+length+'"></span>')[m
+ [m
+     var et = $(document).find('.count-'+length+'');[m
+     var te = $(document).find('#terminal');[m
+[36m@@ -152,12 +151,12 @@[m [m$(function() {[m
+         var bprogress = '#', progress = '',  counters = 0;[m
+         $('.count-'+length).typed({[m
+           strings: [text],[m
+[31m-          typeSpeed: 2,[m
+[32m+[m[32m          typeSpeed: -100000000000,[m
+           callback: function() {[m
+             enter(type,text2);[m
+           },[m
+           onStringTyped: function() {[m
+[31m-            te.scrollTop(el.prop("scrollHeight") * 100);[m
+[32m+[m[32m            te.scrollTop(te.prop("scrollHeight") * 100);[m
+             console.log('after');[m
+             clearTimeout(typing);[m
+             statusObj.text('');[m

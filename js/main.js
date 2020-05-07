@@ -1,4 +1,6 @@
 $(document).ready(function () {
+  localStorage.setItem('typing', false);
+
   var is_keyboard = false;
   var is_landscape = false;
   var initial_screen_size = window.innerHeight;
@@ -44,6 +46,7 @@ $(function() {
 
             if (response[0] == true && response[1] == 'password') {
               term.echo('Enter Your Password :').resume();
+              term.set_mask('*')
               type = response[1];
             }else if (response[0] == true && response[1] == 'login') {
               localStorage.setItem('0_login', true);
@@ -71,7 +74,11 @@ $(function() {
              content = value[3];
 
               if (value[2] == 'wrong') {
-                wrong(result);
+                if (localStorage.getItem('typing') == 'true') {
+                  term.echo('').resume();
+                }else {
+                  wrong(result);
+                }
               }else if (content == 'name') {
                 names(result,type,value[2]);
               }else if (content == 'gender') {
@@ -80,9 +87,7 @@ $(function() {
                 contact(type,value[2]);
               }else if (content == 'stories') {
                 stories(result,type,command,value[2])
-                // typed_message(term,result, 1, function() {
-                //     finish = true;
-                // });
+                localStorage.setItem('typing', true);
               }else if (content == 'ending') {
                 Ending(result,type)
               }else {
@@ -94,6 +99,15 @@ $(function() {
         greetings: 'Enter the chapter to 123456789 continue'
     });
   }
+
+  // document.onkeydown = function (e)
+  // {
+  //   if (type == 'password') {
+  //     setTimeout(function(){
+  //       $(document).find('.cmd-cursor-line span[data-text]').text('*');
+  //     },500)
+  //   }
+  // }
 });
 
 
@@ -143,6 +157,7 @@ $(function() {
 
   function stories(text,type,process,text2) {
     text = text;
+    keydowndisable()
 
     var statusObj = $(document).find('.status');
     var length = $(document).find('.terminal-command[data-index]').length;
@@ -166,13 +181,16 @@ $(function() {
             enter(type,text2);
           },
           onStringTyped: function() {
+            localStorage.setItem('typing', false);
             te.scrollTop(te.prop("scrollHeight") * 100);
             console.log('after');
             clearTimeout(typing);
             statusObj.text('');
             $(document).find('.cmd-wrapper').show()
+            keydownenable()
           },
           preStringTyped: function() {
+              typing = false;
               console.log('before');
               $(document).find('.cmd-wrapper').hide()
               $('.typed-cursor').detach();
@@ -240,45 +258,17 @@ function resetForm(withKittens) {
   }, 10000);
 }
 
-});
 
-
-var anim = false;
-function typed(finish_typing) {
-    return function(term, message, delay, finish) {
-        anim = true;
-        var prompt = term.get_prompt();
-        var c = 0;
-        if (message.length > 0) {
-            term.set_prompt('');
-            var new_prompt = '';
-            var interval = setInterval(function() {
-                var chr = $.terminal.substring(message, c, c+1);
-                new_prompt += chr;
-                term.set_prompt(new_prompt);
-                c++;
-                if (c == length(message)) {
-                    clearInterval(interval);
-                    // execute in next interval
-                    setTimeout(function() {
-                        // swap command with prompt
-                        finish_typing(term, message, prompt);
-                        anim = false
-                        finish && finish();
-                    }, delay);
-                }
-            }, delay);
-        }
-    };
+function keydowndisable() {
+  document.onkeydown = function (e)
+   {
+    return false;
+   }
 }
-function length(string) {
-    string = $.terminal.strip(string);
-    return $('<span>' + string + '</span>').text().length;
+function keydownenable() {
+  document.onkeydown = function (e)
+   {
+    return true;
+   }
 }
-var typed_prompt = typed(function(term, message, prompt) {
-    term.set_prompt(message + ' ');
-});
-var typed_message = typed(function(term, message, prompt) {
-    term.echo(message)
-    term.set_prompt(prompt);
 });
