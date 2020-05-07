@@ -1,7 +1,0 @@
-Long Text 3
-
-Primary inflows	Jordan River
-Primary outflows	None
-Catchment area	41,650 km2 (16,080 sq mi)
-Basin countries	Israel
-Jordan
