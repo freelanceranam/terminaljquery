@@ -2,12 +2,12 @@
 session_start(); // call session
 
 // for example
-$_SESSION['logged_email'] = 'Nabilah';
+$_SESSION['logged_email'] = 'nabilah';
 $_SESSION['logged_password'] = '09-10';
 
 if (isset($_POST['command'])) {
 
-  if($_POST['type'] == 'login' && $_POST['command'] == $_SESSION['logged_email']) // what he enter is matching the email in session = jasonwind@gmail.com
+  if($_POST['type'] == 'login' && strtolower($_POST['command']) == $_SESSION['logged_email']) // what he enter is matching the email in session = jasonwind@gmail.com
     {
       echo json_encode(array(true,'password')); // tell ajax that the data is correct, allow him to enter the password
     }elseif ($_POST['type'] == 'password' && $_POST['command'] == $_SESSION['logged_password']) // what he enter is matching the email in session = jasonwind@gmail.com

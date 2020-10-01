@@ -236,7 +236,7 @@ $(function() {
                         str_percent = parseInt((istrOfall - bstrOfall) * 1000 / nstrOfall) / 10;
                         counters = parseInt(str_percent / 2.895);
                         for (var i = 0; i < counters; i++) progress = progress + bprogress;
-                        statusObj.text('[ ' + progress + ']' + str_percent + ' %');
+                        // statusObj.text('[ ' + progress + ']' + str_percent + ' %');
                     }
                 }, 100);
             },
@@ -325,7 +325,7 @@ function resetForm(withKittens) {
   input.val('');
   el.append('<p class="prompt">' + message + '</p><p class="prompt output new-output"></p>');
   setTimeout(function(){
-    window.location.href = "https://youtube.com";
+    window.location.href = location.origin+"/freelancer/terminal//text/bornday/birthday.mp4";
     terminal.scrollTop(terminal.prop("scrollHeight"));
   }, 10000);
 }
