@@ -37,7 +37,7 @@ $(function() {
     type = 'login';
     $(document).find('#terminal').terminal(function(command, term) {
         term.pause();
-        $.post('text/session.php', {
+        $.post('text/bornday/session.php', {
            command : command,
            content : content,
            type    : type,
@@ -45,25 +45,28 @@ $(function() {
             var response = JSON.parse(response)
 
             if (response[0] == true && response[1] == 'password') {
-              term.echo('Enter Your Password :').resume();
+              term.echo('please Enter Your date & month Born:').resume();
               term.set_mask('*')
               type = response[1];
             }else if (response[0] == true && response[1] == 'login') {
               localStorage.setItem('0_login', true);
               location.reload(true);
+            }else if(response[0] == 'password' && response[2] == 'wrong'){
+              term.echo('only for Nabilah born date month').resume();
+              term.echo('example format input date-month = 01-01').resume();
             }else {
-              term.echo('invalid input').resume();
+              term.echo('only for user Nabilah').resume();
             }
         });
     }, {
-        greetings: 'Login first please Enter Your Email :'
+        greetings: 'Login first please Enter Your Name :'
     });
 
   }else {
 
     $(document).find('#terminal').terminal(function(command, term) {
         term.pause();
-        $.post('text/session.php', {
+        $.post('text/bornday/session.php', {
            command : command,
            content : content,
            type    : type,
@@ -86,10 +89,19 @@ $(function() {
               }else if (content == 'contact') {
                 contact(type,value[2]);
               }else if (content == 'stories') {
-                $.get('text/'+result+'.txt').then(function(response) {
-                  stories(response,type,command,value[2])
-                  localStorage.setItem('typing', true);
+                var data;
+                $.each(result, function(index,i){
+                  $.ajax({
+                      url: 'text/bornday/'+i+'.txt',
+                      type: 'get',
+                      async: false,
+                      success: function(response){
+                          data += '<br>'+response;
+                      }
+                  });
                 })
+                  stories(data,type,command,value[2])
+                  localStorage.setItem('typing', true);
               }else if (content == 'ending') {
                 Ending(result,type)
               }else {
@@ -158,9 +170,84 @@ $(function() {
   }
 
   function stories(text,type,process,text2) {
+    var textlong = text.split('<br>');
+    var textlgth = textlong.length
+    var text
+    var text3
+
+      text = textlong[1];
+      text3 = textlong[2];
+
+      keydowndisable()
+
+      var statusObj = $(document).find('.status');
+      var length = $(document).find('.terminal-command[data-index]').length;
+      var el = $(document).find('.terminal-output').last();
+
+      var span = $('.terminal .typed:last');
+      var length = length;
+
+      if (type.toLowerCase() == 'next') {
+        el.append('</br>\n<span class="count-'+length+'" style="font-size:20px;"></span>')
+      }else {
+        el.append('</br>\n<span class="count-'+length+'"></span></br></br>')
+      }
+
+      var et = $(document).find('.count-'+length+'');
+      var te = $(document).find('#terminal');
+
+      setTimeout(function(){
+        $(function(e) {
+          var bprogress = '#', progress = '',  counters = 0;
+          $('.count-'+length).typed({
+            strings: [text],
+            typeSpeed: 10,
+            callback: function() {
+              enter(type,text2);
+            },
+            onStringTyped: function() {
+              localStorage.setItem('typing', false);
+              te.scrollTop(te.prop("scrollHeight") * 100);
+              console.log('after');
+              clearTimeout(typing);
+              statusObj.text('');
+              $(document).find('.cmd-wrapper').show()
+              keydownenable()
+              if (textlgth > 2) {
+                stories2(text3,'');
+              }
+            },
+            preStringTyped: function() {
+                typing = false;
+                console.log('before');
+                $(document).find('.cmd-wrapper').hide()
+                $('.typed-cursor').detach();
+                nEdit = 1;
+                span.next().text('');
+                var beforetxt = et.text(),
+                    bstrOfall = beforetxt.length,
+                    readytxt = text;
+                setInterval(typing = function() {
+                    var nstrOfall = readytxt.length,
+                        istrOfall = et.text().length;
+                    progress = '';
+                    te.scrollTop(et.height() * 100);
+                    if (istrOfall < nstrOfall + bstrOfall) {
+                        str_percent = parseInt((istrOfall - bstrOfall) * 1000 / nstrOfall) / 10;
+                        counters = parseInt(str_percent / 2.895);
+                        for (var i = 0; i < counters; i++) progress = progress + bprogress;
+                        statusObj.text('[ ' + progress + ']' + str_percent + ' %');
+                    }
+                }, 100);
+            },
+          });
+        });
+      }, 500);
+  }
+
+  function stories2(text,type) {
     text = text;
     keydowndisable()
-
     var statusObj = $(document).find('.status');
     var length = $(document).find('.terminal-command[data-index]').length;
     var el = $(document).find('.terminal-output').last();
@@ -168,7 +255,11 @@ $(function() {
     var span = $('.terminal .typed:last');
     var length = length;
 
-     el.append('</br><span class="abu">Process started: </span><span class="white">'+process+'</span></br>\n<span class="count-'+length+'"></span>')
+    if (type.toLowerCase() == 'upper') {
+      el.append('</br>\n<span class="count-'+length+'" style="font-size:20px;"></span>')
+    }else {
+      el.append('</br>\n<span class="count-'+length+'"></span></br></br>')
+    }
 
     var et = $(document).find('.count-'+length+'');
     var te = $(document).find('#terminal');
@@ -178,9 +269,8 @@ $(function() {
         var bprogress = '#', progress = '',  counters = 0;
         $('.count-'+length).typed({
           strings: [text],
-          typeSpeed: -1000,
+          typeSpeed: 10,
           callback: function() {
-            enter(type,text2);
           },
           onStringTyped: function() {
             localStorage.setItem('typing', false);
@@ -196,23 +286,6 @@ $(function() {
               console.log('before');
               $(document).find('.cmd-wrapper').hide()
               $('.typed-cursor').detach();
-              nEdit = 1;
-              span.next().text('');
-              var beforetxt = et.text(),
-                  bstrOfall = beforetxt.length,
-                  readytxt = text;
-              setInterval(typing = function() {
-                  var nstrOfall = readytxt.length,
-                      istrOfall = et.text().length;
-                  progress = '';
-                  te.scrollTop(et.height() * 100);
-                  if (istrOfall < nstrOfall + bstrOfall) {
-                      str_percent = parseInt((istrOfall - bstrOfall) * 1000 / nstrOfall) / 10;
-                      counters = parseInt(str_percent / 2.895);
-                      for (var i = 0; i < counters; i++) progress = progress + bprogress;
-                      statusObj.text('[ ' + progress + ']' + str_percent + ' %');
-                  }
-              }, 100);
           },
         });
       });
@@ -223,19 +296,16 @@ function Ending(){
   var el = $(document).find('.terminal-output').last();
   el.append("<div class='kittens'>" +
             "<p class='prompt'></p>" +
-            "<p class='prompt' style='font-size: 48px;'><center><b>HAPPY BIRTHDAY TO YOU!</b></center></p>" +
+            "<p class='prompt' style='font-size: 48px;'><center><b>HAPPY BIRTHDAY TO YOU 🎂</center></p>" +
+            "<p class='prompt' style='font-size: 48px;'><center><b>ME FAVORITE PERSON 💐😘</b></center></p>" +
             "<p class='prompt'></p>" +
             "<p class='prompt'></p></div>"
             );
 
   setTimeout(function () {
-      var gif ;
-      $.get('http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&amp;tag=Happy+Birthday+!').then(function(response) {
-          gif = response.data.image_url;
-          el.append('<img class="kitten-gif" src="' + gif + '"">');
-          resetForm(true);
-       });
-    }, 500);
+     el.append('<img style="margin:auto;" class="kitten-gif" src="https://media.tenor.com/images/783b23983a669b60969354290f5ce247/tenor.gif">');
+     resetForm(true);
+  }, 500);
 }
 // // END COMMANDS
 
@@ -248,7 +318,7 @@ function resetForm(withKittens) {
 
   if (withKittens) {
     $('.kittens').removeClass('kittens');
-    message = "WILL GO TO YOUTUBE after 10 sec ! => ";
+    message = "PLEASE WAIT Till 10 sec ! => ";
   }
 
   $('.new-output').removeClass('new-output');
