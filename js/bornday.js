@@ -325,7 +325,7 @@ function resetForm(withKittens) {
   input.val('');
   el.append('<p class="prompt">' + message + '</p><p class="prompt output new-output"></p>');
   setTimeout(function(){
-    window.location.href = location.origin+"/freelancer/terminal//text/bornday/birthday.mp4";
+    window.location.href = "https://youtu.be/sR5l1rKrfY4";
     terminal.scrollTop(terminal.prop("scrollHeight"));
   }, 10000);
 }
